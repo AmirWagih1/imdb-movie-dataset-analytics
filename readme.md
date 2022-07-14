@@ -19,7 +19,7 @@ I did some data wrangling, analytics, visulizations for an [IMDB dataset](https:
 ### 1. Data Wrangling
 - #### For Data Cleaning:
   - I Started off by doing **null analysis** in **pandas** to check which columns are worth **imputing** and which are not. I Calculated **Percentage of Nulls** in Each column and I set  **60%** as my thrushold for dropping a column Instead of imputing it (Since it was clear just by visualizing that next bigger percentage of nulls was much much smaller than 60%) 
-      - **Check** : `null_analysis.py`, `null_info`
+      - **Check** : `null_analysis.py`, `null_info.xlxs`
   - I Imputed `*_*_avg_vote` columns null values in SQL using the average vote of `*_*_avg_vote` non-null values having the same `year` as the movie you are imputing `*_*_avg_vote` for.
   - Fixed the text that was included in some values for `date_published` column as well as other stuff, feel free to check the comments in the SQL script 
   
@@ -31,15 +31,15 @@ I did some data wrangling, analytics, visulizations for an [IMDB dataset](https:
 - #### For Data Exploration:
 	 - I Created **Cross-tabulations** for:
 	      - Movie Rating, Gender
-		  - Movie Rating, Age
+	      - Movie Rating, Age
 		  
   **Check:** `all cross-tabulations combined.xlsx`
    
 	 - I Created new columns
 	    - `year_avg_rating` column : Which is the **average rating** for all movies in a specific year
-	    - `percent_change_from_prev_year` column : Which is the **percentage change** in average rating or movies from previous year
-		- `cat` column : classifies `percent_change_from_prev_year`  as either `MAX` or `MID` or `MIN` 
-		
+	    - `percent_change_from_prev_year` column : Which is the **percentage change** in average rating of movies in a year from previous year
+	    - `cat` column : classifies `percent_change_from_prev_year`  as either `MAX` or `MID` or `MIN` where `MAX` is the maximum value and `MIN` is the maximum                  value while `MID` is any other point
+ 		
   **Check:** `year_average_rating_year.csv`
 
  **Check** : `data_exploration.sql` For all data exploration scripts
