@@ -1,6 +1,4 @@
 # IMDB Dataset Analytics
-
-### Quick Summary:
 I did some data wrangling, analytics, visulizations for an [IMDB dataset](https://www.kaggle.com/datasets/ngochieunguyen/imdb-extensive) I found on kaggle, I used data in  `movies.csv`, `movies_ratings.csv`
 
 ### Tools used:
@@ -10,8 +8,7 @@ I did some data wrangling, analytics, visulizations for an [IMDB dataset](https:
 - R
 - Excel
 
-### The project has been divided to two parts:
- **Content**:
+### Project Appendix:
    1.  Data Wrangling (Data Cleaning, Data Exploration) in SQL, Pandas
    2.  Data Analysis in R
    3. Tablue Visualizations
