@@ -234,49 +234,9 @@ MODIFY avg_vote double,
 MODIFY votes int,
 MODIFY reviews_from_users  int,
 MODIFY reviews_from_critics  int;
- #                        ----- Fixing some problems in date_published column -----
-#Fixing date format 
-SELECT year , date_published , REPLACE(REGEXP_REPLACE(date_published , '^[0-9]{2,4}' ,  year) , '-' , '/') as modified_date FROM movies
-WHERE REGEXP_LIKE(date_published , '[0-9]{2,4}[/-][0-9]{2}[/-][0-9]{2}');
 
-UPDATE movies
-SET date_published = REPLACE(REGEXP_REPLACE(date_published , '^[0-9]{2,4}' ,  year) , '-' , '/')
-WHERE REGEXP_LIKE(date_published , '[0-9]{2,4}[/-][0-9]{2}[/-][0-9]{2}');
 
-SELECT date_published , REGEXP_REPLACE(date_published , '[[:alpha:][:blank:]]+' , '') as date_modified FROM movies
-WHERE NOT (REGEXP_LIKE(date_published , '[0-9]{2,4}[/-][0-9]{2}[/-][0-9]{2}') OR REGEXP_LIKE(date_published , '^[0-9]{2,4}$'));
-
-UPDATE movies
-SET date_published = REGEXP_REPLACE(date_published , '[[:alpha:][:blank:]]+' , '')
-WHERE NOT (REGEXP_LIKE(date_published , '[0-9]{2,4}[/-][0-9]{2}[/-][0-9]{2}') OR REGEXP_LIKE(date_published , '^[0-9]{2,4}$'));
-
-UPDATE movies
-SET date_published = CONCAT(date_published , '/00/00')
-WHERE REGEXP_LIKE(date_published , '^[0-9]{4}$');
-
-#Fixing februarys with 29 days in leap years
-SELECT date_published 
-, CASE WHEN NOT ( (SUBSTRING(date_published , 1 , 4) % 4 = 0 AND SUBSTRING(date_published , 1 , 4) % 100 != 0) OR SUBSTRING(date_published , 1 , 4) % 400 = 0 ) 
-  THEN (CASE WHEN (SUBSTRING(date_published , LOCATE('/' , date_published) + 1 , 2) = 2 AND SUBSTRING(date_published , LOCATE('/' , date_published, LOCATE('/' , date_published) + 1) + 1 , 2) = 29) THEN REPLACE(date_published , '29' , '28') ELSE date_published END) ELSE date_published END as date_modified ,  (CASE WHEN (YEAR(date_published) % 4 = 0 AND YEAR(date_published) % 100 != 0) OR YEAR(date_published) % 400 = 0 THEN true ELSE false END) as isleap
-  , SUBSTRING(date_published , 1 , 4) AS YEAR 
-  , SUBSTRING(date_published , LOCATE('/' , date_published) + 1 , 2) AS MONTH 
-  , SUBSTRING(date_published , LOCATE('/' , date_published, LOCATE('/' , date_published) + 1) + 1 , 2) AS DAY FROM movies;
-#WHERE  SUBSTRING(date_published , LOCATE('/' , date_published) + 1 , 2) = 2 AND  SUBSTRING(date_published , LOCATE('/' , date_published, LOCATE('/' , date_published) + 1) + 1 , 2) = 29;
-
-UPDATE movies
-SET date_published = CASE WHEN NOT ( (SUBSTRING(date_published , 1 , 4) % 4 = 0 AND SUBSTRING(date_published , 1 , 4) % 100 != 0) OR SUBSTRING(date_published , 1 , 4) % 400 = 0 ) 
-THEN (CASE WHEN (SUBSTRING(date_published , LOCATE('/' , date_published) + 1 , 2) = 2 AND SUBSTRING(date_published , LOCATE('/' , date_published, LOCATE('/' , date_published) + 1) + 1 , 2) = 29) THEN REPLACE(date_published , '29' , '28') ELSE date_published END) ELSE date_published END
-WHERE  SUBSTRING(date_published , LOCATE('/' , date_published) + 1 , 2) = 2 AND  SUBSTRING(date_published , LOCATE('/' , date_published, LOCATE('/' , date_published) + 1) + 1 , 2) = 29;
-
-#Finally convertng all the date_published column to DATE type
-ALTER table movies
-MODIFY date_published DATE;
-
-#To make sure all dates are fixed , Returns 0
-SELECT COUNT(*) FROM movies
-WHERE NOT REGEXP_LIKE(date_published , '^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
-
-#number of null counteries (may or may not include in protoflio)
+#number of null countries
 SELECT SUM(CASE WHEN TRUE THEN 1 END) as null_counterties_count FROM 
 (SELECT * FROM movies
 WHERE country = '' 
@@ -289,11 +249,6 @@ ALTER table movies
 change column genre_split genre VARCHAR(12)
 AFTER date_published;
 
-SELECT * FROM movies
-INTO OUTFILE 'E:/Career related/IMDB Project/movies_date_fixed.csv'
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n';
 
 (SELECT 'id', 'imdb_title_id', 'year_', 'weighted_average_vote', 'total_votes', 'mean_vote', 'median_vote', 'votes_10', 'votes_9', 'votes_8', 'votes_7', 'votes_6', 'votes_5', 'votes_4', 'votes_3', 'votes_2', 'votes_1', 'allgenders_18age_avg_vote', 'allgenders_18age_votes', 'allgenders_30age_avg_vote', 'allgenders_30age_votes', 'allgenders_45age_avg_vote', 'allgenders_45age_votes', 'males_allages_avg_vote', 'males_allages_votes', 'males_18age_avg_vote', 'males_18age_votes', 'males_30age_avg_vote', 'males_30age_votes', 'males_45age_avg_vote', 'males_45age_votes', 'females_allages_avg_vote', 'females_allages_votes', 'females_18age_avg_vote', 'females_18age_votes', 'females_30age_avg_vote', 'females_30age_votes', 'females_45age_avg_vote', 'females_45age_votes', 'top1000_voters_rating', 'top1000_voters_votes', 'us_voters_rating', 'us_voters_votes', 'non_us_voters_rating', 'non_us_voters_votes')
 UNION
